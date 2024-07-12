@@ -6,7 +6,7 @@ import cosmopower as cp
 from cosmopower import cosmopower_NN
 __all__ = ["Matter_powerspectrum"]
 
-
+version = "_v3"
 class Matter_powerspectrum(object):
     """
     A class to load and call the HMcode2020 for the matter powerspectrum.
@@ -127,6 +127,11 @@ class Matter_powerspectrum(object):
                   for key in set(list(_kwargs.keys())) - set(['self'])}
         if not self.compute_linear:
             raise ValueError("Please enable the linear emulator!")  
+        w = np.array(kwargs['w0'])+np.array(kwargs['wa'])
+        if any(w>0):
+            raise ValueError(f"""
+                Dark energy model has w0 + wa > 0, giving w > 0 at high redshift
+                """)
         emulator = self.emulator['linear']
 
         pp = self._get_parameters(kwargs, 'linear')
@@ -146,7 +151,7 @@ class Matter_powerspectrum(object):
                                                     pk_lin_i,
                                                     kind='linear'
                                                     ) for pk_lin_i in pk_lin]
-                pk_lin = [pklin_interp[i](k) for i in range(zbins)]
+                pk_lin = np.array([pklin_interp[i](k) for i in range(zbins)])
         else:
             k = emulator['k']
 
@@ -166,6 +171,11 @@ class Matter_powerspectrum(object):
                   for key in set(list(_kwargs.keys())) - set(['self'])}
         if not self.compute_linear:
             raise ValueError("Please enable the sigma8 emulator!")  
+        w = np.array(kwargs['w0'])+np.array(kwargs['wa'])
+        if any(w>0):
+            raise ValueError(f"""
+                Dark energy model has w0 + wa > 0, giving w > 0 at high redshift
+                """)
         emulator = self.emulator['sigma8']
         pp = self._get_parameters(kwargs, 'sigma8')
         sigma8_emu = emulator['model_tot'].predictions_np(pp)
@@ -210,7 +220,7 @@ class Matter_powerspectrum(object):
                 raise ValueError(f"""
                     A minimum k > {min(emulator['k'])} h/Mpc and a
                     maximum k < {max(emulator['k'])} h/Mpc
-                    are required for the linear emulator:
+                    are required for the nonlinear emulator:
                     the current values are {min(k)} h/Mpc and {max(k)} h/Mpc
                     """)
             else:
@@ -218,7 +228,7 @@ class Matter_powerspectrum(object):
                                                     pk_nonlin_i,
                                                     kind='linear'
                                                     ) for pk_nonlin_i in pk_nonlin]
-                pk_nonlin = [pknonlin_interp[i](k) for i in range(zbins)]
+                pk_nonlin = np.array([pknonlin_interp[i](k) for i in range(zbins)])
         else:
             k = emulator['k']
 
@@ -257,9 +267,15 @@ class Matter_powerspectrum(object):
         _kwargs = locals()
         kwargs = {key: _kwargs[key]
                   for key in set(list(_kwargs.keys())) - set(['self'])}
-
+    
         if not self.compute_baryonic_boost:
             raise ValueError("Please enable the baryonic boost!")
+        
+        w = np.array(kwargs['w0'])+np.array(kwargs['wa'])
+        if any(w>0):
+            raise ValueError(f"""
+                Dark energy model has w0 + wa > 0, giving w > 0 at high redshift
+                """)
         
         nonu = kwargs['nonu'] if 'nonu' in kwargs.keys() else False   
         k = kwargs['k'] if 'k' in kwargs.keys() else None  
@@ -274,7 +290,7 @@ class Matter_powerspectrum(object):
                 raise ValueError(f"""
                     A minimum k > {min(emulator['k'])} h/Mpc and a
                     maximum k < {max(emulator['k'])} h/Mpc
-                    are required for the linear emulator:
+                    are required for the baryonic boost emulator:
                     the current values are {min(k)} h/Mpc and {max(k)} h/Mpc
                     """)
             else:
@@ -282,7 +298,7 @@ class Matter_powerspectrum(object):
                                                     baryonic_boost_i,
                                                     kind='linear'
                                                     ) for baryonic_boost_i in barboost]
-                baryonic_boost = [barboost_interp[i](k) for i in range(zbins)]
+                baryonic_boost = np.array([barboost_interp[i](k) for i in range(zbins)])
         else:
             k = emulator['k']
 
@@ -308,7 +324,11 @@ class Matter_powerspectrum(object):
         _kwargs = locals()
         kwargs = {key: _kwargs[key]
                   for key in set(list(_kwargs.keys())) - set(['self'])}
-
+        w = np.array(kwargs['w0'])+np.array(kwargs['wa'])
+        if any(w>0):
+            raise ValueError(f"""
+                Dark energy model has w0 + wa > 0, giving w > 0 at high redshift
+                """)
         k, pk_nl = self._evaluate_nonlinear(**kwargs)
 
         if baryonic_boost:
@@ -334,8 +354,8 @@ def load_linear_emu(verbose=True):
     
     basefold = os.path.dirname(os.path.abspath(__file__))
 
-    emulator_cold_name = (basefold+"/models/log10_nonu_matter_linear_emu")
-    emulator_tot_name = (basefold+"/models/log10_total_matter_linear_emu")
+    emulator_cold_name = (basefold+"/models"+version+"/log10_nonu_matter_linear_emu")
+    emulator_tot_name = (basefold+"/models"+version+"/log10_total_matter_linear_emu")
     emulator = {}
     emulator['model_nonu'] = cosmopower_NN(restore=True, 
                       restore_filename=emulator_cold_name,
@@ -343,10 +363,10 @@ def load_linear_emu(verbose=True):
     emulator['model_tot'] = cosmopower_NN(restore=True, 
                       restore_filename=emulator_tot_name,
                       )
-    emulator['k'] = np.genfromtxt(basefold+"/models/k_h_Mpc_CAMBemu.dat")
+    emulator['k'] = np.genfromtxt(basefold+"/models"+version+"/k_h_Mpc_CAMBemu.dat")
     emulator['keys'] = ['omega_cdm', 'omega_baryon',
                         'hubble', 'ns', 'As', 'neutrino_mass', 'w0', 'wa', 'z']
-    emulator['bounds'] = np.load(basefold+"/models/dict_bounds.npz")
+    emulator['bounds'] = np.load(basefold+"/models"+version+"/dict_bounds.npz")
     if verbose:
         print('Linear emulator loaded in memory.')
     return emulator    
@@ -363,7 +383,7 @@ def load_sigma8_emu(verbose=True):
         print('Loading sigma8 emulator...')
     
     basefold = os.path.dirname(os.path.abspath(__file__))
-    emulator_tot_name = (basefold+"/models/sigma8_emu")
+    emulator_tot_name = (basefold+"/models"+version+"/sigma8_emu")
     emulator = {}
 
     emulator['model_tot'] = cosmopower_NN(restore=True, 
@@ -371,7 +391,7 @@ def load_sigma8_emu(verbose=True):
                       )
     emulator['keys'] = ['omega_cdm', 'omega_baryon',
                         'hubble', 'ns', 'As', 'neutrino_mass', 'w0', 'wa', 'z']
-    emulator['bounds'] = np.load(basefold+"/models/dict_bounds.npz")
+    emulator['bounds'] = np.load(basefold+"/models"+version+"/dict_bounds.npz")
     if verbose:
         print('Linear emulator loaded in memory.')
     return emulator    
@@ -393,8 +413,8 @@ def load_nonlinear_emu(verbose=True):
         print('Loading nonlinear emulator...')
 
     basefold = os.path.dirname(os.path.abspath(__file__))    
-    emulator_cold_name = (basefold+"/models/log10_nonu_matter_nonlinear_emu")
-    emulator_tot_name = (basefold+"/models/log10_total_matter_nonlinear_emu")
+    emulator_cold_name = (basefold+"/models"+version+"/log10_nonu_matter_nonlinear_emu")
+    emulator_tot_name = (basefold+"/models"+version+"/log10_total_matter_nonlinear_emu")
     emulator = {}
     emulator['model_nonu'] = cosmopower_NN(restore=True, 
                       restore_filename=emulator_cold_name,
@@ -405,7 +425,7 @@ def load_nonlinear_emu(verbose=True):
     emulator['k'] = kh_hmcode
     emulator['keys'] = ['omega_cdm', 'omega_baryon',
                         'hubble', 'ns', 'As', 'neutrino_mass', 'w0', 'wa', 'z']
-    emulator['bounds'] = np.load(basefold+"/models/dict_bounds.npz")
+    emulator['bounds'] = np.load(basefold+"/models"+version+"/dict_bounds.npz")
     if verbose:
         print('Non-linear emulator loaded in memory.')
 
@@ -423,8 +443,8 @@ def load_baryonic_emu(verbose=True):
     if verbose:
         print('Loading linear emulator...')
     basefold = os.path.dirname(os.path.abspath(__file__))       
-    emulator_cold_name = (basefold+"/models/nonu_matter_bar_boost_emu")
-    emulator_tot_name = (basefold+"/models/total_matter_bar_boost_emu")
+    emulator_cold_name = (basefold+"/models"+version+"/nonu_matter_bar_boost_emu")
+    emulator_tot_name = (basefold+"/models"+version+"/total_matter_bar_boost_emu")
     emulator = {}
     emulator['model_nonu'] = cosmopower_NN(restore=True, 
                       restore_filename=emulator_cold_name,
@@ -435,7 +455,7 @@ def load_baryonic_emu(verbose=True):
     emulator['k'] = kh_hmcode
     emulator['keys'] = ['omega_cdm', 'omega_baryon',
                         'hubble', 'ns', 'As', 'neutrino_mass', 'w0', 'wa', 'log10TAGN', 'z']
-    emulator['bounds'] = np.load(basefold+"/models/dict_bounds.npz")
+    emulator['bounds'] = np.load(basefold+"/models"+version+"/dict_bounds.npz")
     if verbose:
         print('Baryonic boost emulator loaded in memory.')
 

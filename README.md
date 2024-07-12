@@ -15,11 +15,11 @@ pip install . [--user]
 Required python packages:
 * numpy
 * scipy
-* cosmopower
 
 For tutorials:
 * matplotlib
-
+* emcee
+* getdist
 
 ## Usage
 
@@ -47,24 +47,27 @@ k_lin, pk_lin_nonu = emulator.get_linear_pk(nonu=True, **params)
 k_nonlin, pk_nonlin_total = emulator.get_nonlinear_pk(baryonic_boost=True, **params)
 ```
 Note that for neutrino calculations we assume 2 massless neutrinos and 1 massive neutrino with the mass equal to 'neutrino_mass'.
-You can also see an example in the tutorials-folder.
+You can also see an example in the tutorials-folder as well as an initialising CAMB file.
 
 ## Parameter ranges
-| parameter     | limits                |
-| :---:         | :---:                 |
-| omega_cdm     | [0.15, 0.6]           |
-| omega_baryon  | [0.03, 0.07]          |
-| hubble        | [0.5, 0.9]            |
-| As            | [0.547e-9, 5.459e-9]  |
-| ns            | [0.6, 1.2]            |
-| neutrino_mass | [0., 0.5]             |
-| w0            | [-1.5, -0.3]          |
-| wa            | [-2., 2.]             |
-| log10TAGN     | [7.6, 8.3]            |
-| z             | [0.0, 3.]             |
-| k_lin         | [1e-4, 50]            |
-| k_nonlin      | [0.01, 50]             |
+| parameter         | limits                |
+| :---:             | :---:                 |
+| omega_cdm         | [0.1, 0.8]            |
+| omega_baryon      | [0.01, 0.1]           |
+| hubble            | [0.4, 1.]             |
+| As                | [0.495e-9, 5.459e-9]  |
+| ns                | [0.6, 1.2]            |
+| neutrino_mass [eV]| [0., 0.5]             |
+| w0                | [-3., -0.3]           |
+| wa                | [-3., 3.]             |
+| log10TAGN         | [7.6, 8.3]            |
+| z                 | [0.0, 4.]             |
+| :---:             | :---:                 |
+| k_lin [h/Mpc]     | [3.7e-4, 50]          |
+| k_nonlin [h/Mpc]  | [0.01, 50]            |
 
+Note that $w = w_0 + (1-a)w_a$ must be negative at all redshifts, hence we impose
+the following condition: $w_0 + w_a \leq 0$. One could add it on the level of priors into analysis too.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

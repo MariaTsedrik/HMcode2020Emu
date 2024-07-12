@@ -7,7 +7,7 @@ setup(
     name="HMcode2020Emu",
     author="Maria Tsedrik",
     author_email="mtsedrik@ed.ac.uk",
-    version=0.1,
+    version=0.3,
     packages=find_packages(),
     install_requires=["numpy", "matplotlib", "scipy", "packaging", "cosmopower", "setuptools",  "sphinx_rtd_theme", "gdown"]
 )

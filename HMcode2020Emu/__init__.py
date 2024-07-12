@@ -22,15 +22,18 @@ def download_data(download_dir):
     import glob
     import gdown
 
-    #url = 'https://drive.google.com/file/d/1xup9pe2Ro2vGKWih2Gx9zuXZKn1WRaLU/view?usp=sharing' v1
-    #url = 'https://drive.google.com/file/d/14tF2GKYOSo5RVRGCSmW3WwxS4bz5XaZv/view?usp=sharing' v2
-    filenames = 'models_v2.zip'
-    out_filenames = 'models'
+    #url = 'https://drive.google.com/file/d/1xup9pe2Ro2vGKWih2Gx9zuXZKn1WRaLU/view?usp=sharing' #v1
+    #url = 'https://drive.google.com/file/d/14tF2GKYOSo5RVRGCSmW3WwxS4bz5XaZv/view?usp=sharing' #v2
+    #url = 'https://drive.google.com/file/d/1Bmr4UpA69RTt15Vbu69I7D7ghUUEVSMP/view?usp=sharing' #v3
+    filenames = 'models_v3.zip'
+    version = '_v3'
+    out_filenames = 'models'+version
     file_path = os.path.join(download_dir, filenames)
     final_path = os.path.join(download_dir, out_filenames)
 
-    #url = 'https://drive.google.com/uc?id=1xup9pe2Ro2vGKWih2Gx9zuXZKn1WRaLU' v1
-    url = 'https://drive.google.com/uc?id=14tF2GKYOSo5RVRGCSmW3WwxS4bz5XaZv' #v2
+    #url = 'https://drive.google.com/uc?id=1xup9pe2Ro2vGKWih2Gx9zuXZKn1WRaLU' #v1
+    #url = 'https://drive.google.com/uc?id=14tF2GKYOSo5RVRGCSmW3WwxS4bz5XaZv' #v2
+    url = 'https://drive.google.com/uc?id=1Bmr4UpA69RTt15Vbu69I7D7ghUUEVSMP' #v3
 
     # do not re-download
     if not os.path.exists(final_path):

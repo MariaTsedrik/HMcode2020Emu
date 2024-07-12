@@ -1,7 +1,0 @@
-numpy
-matplotlib
-scipy
-packaging
-cosmopower
-setuptools
-sphinx_rtd_theme
