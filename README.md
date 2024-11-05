@@ -114,12 +114,16 @@ as well as [this paper](https://arxiv.org/abs/2404.11508) where the similar [dat
     @article{Tsedrik2024,
         author = Tsedrik, Maria and Bose, Benjamin and Carrilho, Pedro and Pourtsidou, Alkistis and Pamuk, Sefa and Casas, Santiago and Lesgourgues, Julien,
         title = {Stage-IV Cosmic Shear with Modified Gravity and Model-independent Screening},
-        journal = {arXiv e-prints},
+        journal = {JCAP},
+        year = {2024},
+        month = {Oct},
+        volume = {2024},
+        number = {10},
+        eid = {099},
+        pages = {099},
+        doi = {10.1088/1475-7516/2024/10/099},
         eprint = {2404.11508},
-        archivePrefix = {arXiv},
-        primaryClass = {astro-ph.CO},
-        month = {Apr},
-        year = {2024}
+        archivePrefix = {arXiv}
     }
 
     
