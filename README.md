@@ -1,7 +1,7 @@
 # HMcode2020 Emulator
 
 Emulated [HMcode2020](https://arxiv.org/abs/2009.01858) non-linear power
-spectra for fast weak lensing analysis.
+spectra for fast weak lensing analysis. The structure of the code is based on [baccoemu](https://bitbucket.org/rangulo/baccoemu/src/master/).
 
 ## Installation
 
